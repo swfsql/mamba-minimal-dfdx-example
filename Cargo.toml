@@ -3,4 +3,42 @@ name = "mamba-minimal-dfdx-example"
 version = "0.1.0"
 edition = "2021"
 
+[patch.crates-io]
+# Temporary patch related to https://github.com/sarah-ek/pulp/issues/5
+pulp = { git = 'https://github.com/swfsql/pulp.git', rev = "f9ed6b4b819cd20e77d28a53232be67a36fb4f32" }
+gemm = { git = 'https://github.com/swfsql/gemm.git', rev = "2fce3da9e48e8c2858c57f7c0d895726ce799c65" }
+gemm-common = { git = 'https://github.com/swfsql/gemm.git', rev = "2fce3da9e48e8c2858c57f7c0d895726ce799c65" }
+gemm-c32 = { git = 'https://github.com/swfsql/gemm.git', rev = "2fce3da9e48e8c2858c57f7c0d895726ce799c65" }
+gemm-c64 = { git = 'https://github.com/swfsql/gemm.git', rev = "2fce3da9e48e8c2858c57f7c0d895726ce799c65" }
+gemm-f32 = { git = 'https://github.com/swfsql/gemm.git', rev = "2fce3da9e48e8c2858c57f7c0d895726ce799c65" }
+gemm-f64 = { git = 'https://github.com/swfsql/gemm.git', rev = "2fce3da9e48e8c2858c57f7c0d895726ce799c65" }
+gemm-f16 = { git = 'https://github.com/swfsql/gemm.git', rev = "2fce3da9e48e8c2858c57f7c0d895726ce799c65" }
+
+# dfdx version containing necessary PRs
+[dependencies.dfdx]
+git = 'https://github.com/swfsql/dfdx.git'
+rev = "1e02f9f26b58465eae685ea655c73ed8196054e8"
+default-features = false
+features = [
+    "std",
+    # "cpu",
+    "safetensors",
+    # "nightly",
+    # "fast-alloc",
+    # "cuda",
+    # "cudnn",
+]
+
 [dependencies]
+# helps to deal with errors
+anyhow = "1.0.0"
+# other dependencies
+#
+#
+hf-hub = "0.3.2"
+memmap2 = "0.9.4"
+tokenizers = "0.13.4"
+safetensors = "0.4.2"
+candle-examples = "0.3.2"
+candle-transformers = "0.3.2"
+candle-core = "0.3.2"
