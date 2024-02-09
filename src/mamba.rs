@@ -69,6 +69,7 @@ pub struct MambaConfig {
     // note: in here no result discards are made, which differs from the references.
     #[module]
     pub norm_f: LayerRMSNorm1DConfig<DModel>,
+    // TODO: delete this layer? It's the same weights from the embedding.
     #[module]
     pub lm_head: LinearConfig<DModel, Vocab>,
 }
@@ -243,5 +244,60 @@ pub mod stateful {
             let x: SingleInput<E, D, T> = x.try_add(x2)?;
             Ok((x, state))
         }
+    }
+}
+
+pub mod load {
+    use std::collections::HashMap;
+
+    #[allow(clippy::useless_format)]
+    pub fn load_renames(n_layer: usize) -> HashMap<String, String> {
+        let mut load_renames = vec![];
+        load_renames.push((
+            format!("embedding.weight"),
+            format!("backbone.embedding.weight"),
+        ));
+        for i in 0..n_layer {
+            let ki = format!("layers.{i}");
+            let vi = format!("backbone.layers.{i}");
+            load_renames.push((
+                format!("{ki}.res.0.1.in_proj.weight"),
+                format!("{vi}.mixer.in_proj.weight"),
+            ));
+            load_renames.push((
+                format!("{ki}.res.0.1.conv1d.weight"),
+                format!("{vi}.mixer.conv1d.weight"),
+            ));
+            load_renames.push((
+                format!("{ki}.res.0.1.conv1d_bias.bias"),
+                format!("{vi}.mixer.conv1d.bias"),
+            ));
+            load_renames.push((
+                format!("{ki}.res.0.1.x_proj.weight"),
+                format!("{vi}.mixer.x_proj.weight"),
+            ));
+            load_renames.push((
+                format!("{ki}.res.0.1.dt_proj.weight"),
+                format!("{vi}.mixer.dt_proj.weight"),
+            ));
+            load_renames.push((
+                format!("{ki}.res.0.1.dt_proj.bias"),
+                format!("{vi}.mixer.dt_proj.bias"),
+            ));
+            load_renames.push((format!("{ki}.res.0.1.a_log"), format!("{vi}.mixer.A_log")));
+            load_renames.push((format!("{ki}.res.0.1.d"), format!("{vi}.mixer.D")));
+            load_renames.push((
+                format!("{ki}.res.0.1.out_proj.weight"),
+                format!("{vi}.mixer.out_proj.weight"),
+            ));
+            load_renames.push((format!("{ki}.res.0.0.gamma"), format!("{vi}.norm.weight")));
+        }
+        load_renames.push((format!("norm_f.gamma"), format!("backbone.norm_f.weight")));
+        load_renames.push((
+            format!("lm_head.weight"),
+            format!("backbone.embedding.weight"),
+        ));
+
+        load_renames.into_iter().collect()
     }
 }
