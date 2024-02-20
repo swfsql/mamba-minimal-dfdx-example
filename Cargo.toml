@@ -3,17 +3,40 @@ name = "mamba-minimal-dfdx-example"
 version = "0.1.0"
 edition = "2021"
 
+[features]
+default = []
+# default = ["native"]
+native = []
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+
+[[bin]]
+name = "mamba_minimal_dfdx_example"
+path = "src/native/main.rs"
+required-features = ["native"]
+
+[patch.crates-io]
+# dfdx = { path = "../dfdx/dfdx" }
+# hf-hub = { path = "../hf-hub" }
+
+# [patch.crates-io.reqwest]
+# version = "0.11.23"
+# git = "https://github.com/ostenbom/reqwest.git"
+# rev = "a055a9025d579e30225ba4f50c435cebfbf4aacc"
+
 # dfdx version containing necessary PRs
 [dependencies.dfdx]
-git = 'https://github.com/swfsql/dfdx.git'
-rev = "1207867ed209360c2e4084d0809a218a0dfe3e0b"
-# path = "../dfdx/dfdx"
+path = "../dfdx/dfdx"
+# git = 'https://github.com/swfsql/dfdx.git'
+# rev = "165abc98c0abcb4311422e99243bc5256ccb05a7"
 default-features = false
 features = [
-    "std",
-    # "cpu",
     "safetensors",
-    # "nightly",
+    "nightly",
+    # "std",
+    # "cpu",
     # "fast-alloc",
     # "cuda",
     # "cudnn",
@@ -23,10 +46,56 @@ features = [
 # helps to deal with errors
 anyhow = "1.0.0"
 # other dependencies
-hf-hub = "0.3.2"
-memmap2 = "0.9.4"
-tokenizers = "0.13.4"
-safetensors = "0.4.2"
-candle-examples = "0.3.2"
+# hf-hub = "0.3.2"
+#
+# candle-examples = "0.3.2"
 candle-transformers = "0.3.2"
 candle-core = "0.3.2"
+tokenizers = { version = "0.13.4", default-features = false, features = [
+    "unstable_wasm",
+] }
+
+# [dependencies.hf-hub]
+# version = "0.3.2"
+# default-features = false
+
+
+# Note: requires esaxx-rs which requires clang
+
+# non-wasm target
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies.hf-hub]
+version = "0.3.2"
+# path = "../hf-hub"
+git = "https://github.com/swfsql/hf-hub.git"
+rev = "72824b64c647c8d435225ee6680aba2c7df32433"
+default-features = false
+features = ["online"]
+
+# wasm target
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+console_error_panic_hook = "0.1.6"
+reqwest = { version = "0.11.23", features = ["json"] }
+wasm-bindgen = { version = "0.2.91", features = ["serde-serialize"] }
+wasm-bindgen-futures = "0.4.24"
+log = "0.4.6"
+# wasm-logger = "0.2.0"
+console_log = { version = "1.0.0", features = ["color"] }
+indexed_db_futures = "0.4.1"
+web-time = "1.0.0"
+
+[target.'cfg(target_arch = "wasm32")'.dependencies.hf-hub]
+# TODO: upload hf-hub fork
+version = "0.3.2"
+# path = "../hf-hub"
+git = "https://github.com/swfsql/hf-hub.git"
+rev = "72824b64c647c8d435225ee6680aba2c7df32433"
+default-features = false
+features = ["wasm"]
+
+# [target.'cfg(target_arch = "wasm32")'.dependencies.tokenizers]
+# version = "0.13.4"
+# features = ["unstable_wasm"]
+
+#
