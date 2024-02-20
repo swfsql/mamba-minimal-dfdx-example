@@ -13,7 +13,7 @@ cargo run --release --features "native"
 
 ##### WASM
 ```bash
-cargo watch -- wasm-pack build --release --target web --no-default-features
+wasm-pack build --release --target web --no-default-features
 http -a 127.0.0.1
 ```
 

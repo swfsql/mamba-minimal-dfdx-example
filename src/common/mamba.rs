@@ -196,6 +196,9 @@ pub mod stateful {
     /// A [MambaStateCache] set to runtime values.
     pub type StateCache<E, D, T> = MambaStateCache<Batch, DState, DConv, DInner, E, D, T>;
 
+    /// A list containing a [MambaStateCache] per [MambaBlock] (stateful).
+    pub type MambaStatesDyn<E, D, T> = Vec<StateCache<E, D, T>>;
+
     // mamba
     impl<E: Dtype, D: Device<E>, T: Tape<E, D>> Module<VocabInputWithStates<E, D, T>> for Mamba<E, D>
     where

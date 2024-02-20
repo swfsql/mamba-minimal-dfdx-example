@@ -3,7 +3,7 @@
 // #![allow(clippy::erasing_op)]
 
 use hf_hub::types::FilePath;
-use mamba_minimal_dfdx_example::{hf_mamba, mamba, TextGeneration};
+use mamba_minimal_dfdx_example::{hf_mamba, mamba, LogitsProcessorWrapper, MambaWrapper};
 
 // use candle_examples::token_output_stream::TokenOutputStream;
 use candle_transformers::generation::LogitsProcessor;
@@ -48,7 +48,7 @@ fn main() -> anyhow::Result<()> {
 
     let start = std::time::Instant::now();
     println!("started loading the model");
-    let m = {
+    let mamba = {
         let n_layer = 24;
         let padded_vocab_size = 50280;
         let d_model = 768;
@@ -63,22 +63,13 @@ fn main() -> anyhow::Result<()> {
     };
     println!("loaded the model in {:?}", start.elapsed());
 
-    let mut pipeline = TextGeneration::new(
-        m,
-        tokenizer,
-        299792458,
-        None,
-        None,
-        1.1,
-        1024, // 64
-        &candle_core::Device::Cpu,
-        cpu.clone(),
-    );
+    let mut models = MambaWrapper::new(mamba, tokenizer);
+    let mut processor = LogitsProcessorWrapper::new(299792458, None, None, 1.1, 1024);
 
-    let stateful = true;
-    let stop_on_eos = false;
-    pipeline.run("Mamba is the", 5000, stateful, stop_on_eos)?;
-    // pipeline.run("Mamba is the", 30, !stateful, stop_on_eos)?;
+    models.run_stateless("Mamba is the", 14, &mut processor)?;
+    println!();
+    models.run_stateful("Mamba is the", 5000, &mut processor)?;
+    println!();
 
     Ok(())
 }
