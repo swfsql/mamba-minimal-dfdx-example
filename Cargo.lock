@@ -404,6 +404,7 @@ dependencies = [
 [[package]]
 name = "dfdx"
 version = "0.13.0"
+source = "git+https://github.com/swfsql/dfdx.git?rev=bff1b658aa3b91b0af57f037c7cc704d216d1f03#bff1b658aa3b91b0af57f037c7cc704d216d1f03"
 dependencies = [
  "dfdx-core",
  "dfdx-derives",
@@ -415,6 +416,7 @@ dependencies = [
 [[package]]
 name = "dfdx-core"
 version = "0.13.0"
+source = "git+https://github.com/swfsql/dfdx.git?rev=bff1b658aa3b91b0af57f037c7cc704d216d1f03#bff1b658aa3b91b0af57f037c7cc704d216d1f03"
 dependencies = [
  "cudarc",
  "gemm",
@@ -431,6 +433,7 @@ dependencies = [
 [[package]]
 name = "dfdx-derives"
 version = "0.13.0"
+source = "git+https://github.com/swfsql/dfdx.git?rev=bff1b658aa3b91b0af57f037c7cc704d216d1f03#bff1b658aa3b91b0af57f037c7cc704d216d1f03"
 dependencies = [
  "dfdx-core",
  "proc-macro2",
@@ -832,7 +835,7 @@ checksum = "bd5256b483761cd23699d0da46cc6fd2ee3be420bbe6d020ae4a091e70b7e9fd"
 [[package]]
 name = "hf-hub"
 version = "0.3.2"
-source = "git+https://github.com/swfsql/hf-hub.git?rev=72824b64c647c8d435225ee6680aba2c7df32433#72824b64c647c8d435225ee6680aba2c7df32433"
+source = "git+https://github.com/swfsql/hf-hub.git?rev=477e0fa0bb398dd96b9106c491e1e3aee32cf6ba#477e0fa0bb398dd96b9106c491e1e3aee32cf6ba"
 dependencies = [
  "bytes",
  "dirs",

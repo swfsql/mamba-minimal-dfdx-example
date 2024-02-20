@@ -28,9 +28,9 @@ required-features = ["native"]
 
 # dfdx version containing necessary PRs
 [dependencies.dfdx]
-path = "../dfdx/dfdx"
-# git = 'https://github.com/swfsql/dfdx.git'
-# rev = "165abc98c0abcb4311422e99243bc5256ccb05a7"
+# path = "../dfdx/dfdx"
+git = 'https://github.com/swfsql/dfdx.git'
+rev = "bff1b658aa3b91b0af57f037c7cc704d216d1f03"
 default-features = false
 features = [
     "safetensors",
@@ -68,7 +68,7 @@ tokenizers = { version = "0.13.4", default-features = false, features = [
 version = "0.3.2"
 # path = "../hf-hub"
 git = "https://github.com/swfsql/hf-hub.git"
-rev = "72824b64c647c8d435225ee6680aba2c7df32433"
+rev = "477e0fa0bb398dd96b9106c491e1e3aee32cf6ba"
 default-features = false
 features = ["online"]
 
@@ -90,7 +90,7 @@ web-time = "1.0.0"
 version = "0.3.2"
 # path = "../hf-hub"
 git = "https://github.com/swfsql/hf-hub.git"
-rev = "72824b64c647c8d435225ee6680aba2c7df32433"
+rev = "477e0fa0bb398dd96b9106c491e1e3aee32cf6ba"
 default-features = false
 features = ["wasm"]
 

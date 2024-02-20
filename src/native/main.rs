@@ -2,6 +2,7 @@
 
 // #![allow(clippy::erasing_op)]
 
+use hf_hub::types::FilePath;
 use mamba_minimal_dfdx_example::{hf_mamba, mamba, TextGeneration};
 
 // use candle_examples::token_output_stream::TokenOutputStream;
@@ -20,7 +21,7 @@ fn main() -> anyhow::Result<()> {
     let api = Api::new()?;
     let tokenizer_filename = api
         .model(RepoId(hf_mamba::TOKENIZER_MODEL_ID.into()))
-        .get(hf_mamba::TOKENIZER_FILENAME)?;
+        .get(&FilePath(hf_mamba::TOKENIZER_FILENAME.into()))?;
     println!(
         "tokenizer {} path: {tokenizer_filename:?}",
         hf_mamba::TOKENIZER_FILENAME
@@ -33,7 +34,7 @@ fn main() -> anyhow::Result<()> {
     ));
     // let mamba_config_filename = repo.get(MAMBA_CONFIG)?;
     // println!("mamba {MAMBA_CONFIG} path: {mamba_config_filename:?}");
-    let mamba_filename = repo.get(hf_mamba::MAMBA_FILENAMES)?;
+    let mamba_filename = repo.get(&FilePath(hf_mamba::MAMBA_FILENAMES.into()))?;
     println!(
         "mamba {} path: {mamba_filename:?}",
         hf_mamba::MAMBA_FILENAMES
@@ -57,7 +58,7 @@ fn main() -> anyhow::Result<()> {
         let load_renames = mamba::load::load_renames(n_layer);
         let skip_missing = true;
         let mut key_map = |key: String| load_renames.get(&key).unwrap_or(&key).to_string();
-        m.load_safetensors_with(&mamba_filename[0], skip_missing, &mut key_map)?;
+        m.load_safetensors_with(&mamba_filename, skip_missing, &mut key_map)?;
         m
     };
     println!("loaded the model in {:?}", start.elapsed());
