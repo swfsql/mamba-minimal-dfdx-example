@@ -1,7 +1,6 @@
 use super::model::ModelSelection;
 pub use super::model::{self, Connection, Model};
 use super::Msg;
-use dfdx::{nn_traits::ResetParams, tensor::Cpu};
 use hf_hub::{api::wasm::Api, types::TmpFileBlobKey};
 use yew::prelude::*;
 
@@ -102,10 +101,10 @@ impl model::Model {
                 model_data.cache.is_done = true;
                 true
             }
-            Msg::StartModelDataUpload(selection) => {
+            Msg::StartModelDataUpload(_selection) => {
                 todo!()
             }
-            Msg::FinishModelDataUpload(selection) => {
+            Msg::FinishModelDataUpload(_selection) => {
                 todo!()
             }
             Msg::StartModelDataLoad(selection) => {

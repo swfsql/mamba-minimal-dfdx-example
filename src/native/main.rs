@@ -2,18 +2,14 @@
 
 // #![allow(clippy::erasing_op)]
 
-use hf_hub::types::FilePath;
-use mamba_minimal_dfdx_example::{hf, mamba, LogitsProcessorWrapper, MambaWrapper};
-
-// use candle_examples::token_output_stream::TokenOutputStream;
-use candle_transformers::generation::LogitsProcessor;
 use dfdx::prelude::*;
+use hf_hub::types::FilePath;
 use hf_hub::{
     api::sync::Api,
     types::{RepoId, RevisionPath},
     Repo, RepoType,
 };
-use tokenizers::Tokenizer;
+use mamba_minimal_dfdx_example::{hf, mamba, LogitsProcessorWrapper, MambaWrapper};
 
 fn main() -> anyhow::Result<()> {
     let start = std::time::Instant::now();

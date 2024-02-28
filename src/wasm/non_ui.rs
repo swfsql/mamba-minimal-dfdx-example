@@ -1,17 +1,11 @@
-use core::slice::SlicePattern;
-
-use crate::{hf, mamba, token_output_stream};
+use crate::{hf, mamba};
 use crate::{LogitsProcessorWrapper, MambaWrapper};
-use candle_transformers::generation::LogitsProcessor;
 use dfdx::prelude::*;
 use hf_hub::{
     api::wasm::Api,
     types::{FilePath, RepoId, RevisionPath},
     Repo, RepoType,
 };
-use token_output_stream::TokenOutputStream;
-use tokenizers::Tokenizer;
-use wasm_bindgen::prelude::wasm_bindgen;
 
 pub async fn run() -> anyhow::Result<()> {
     let api = Api::new().await?;

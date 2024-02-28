@@ -1,17 +1,11 @@
+use crate::{hf, mamba, LogitsProcessorWrapper, MambaWrapper};
 use dfdx::tensor::Cpu;
 use hf_hub::{
     api::wasm::{Api, ApiRepo, Metadata, UrlTemplate},
-    types::{
-        Endpoint, FilePath, FileUrl, RepoId, RevisionPath, TmpFileBlobKey, TmpFileBlobKeyList,
-    },
+    types::{Endpoint, FilePath, FileUrl, RepoId, RevisionPath, TmpFileBlobKeyList},
     Repo, RepoType,
 };
 use tokenizers::Tokenizer;
-use yew::prelude::*;
-
-use crate::{
-    hf, mamba, token_output_stream::TokenOutputStream, LogitsProcessorWrapper, MambaWrapper,
-};
 
 pub struct Model {
     // general data

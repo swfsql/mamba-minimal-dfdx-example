@@ -134,6 +134,7 @@ impl MambaWrapper {
 
                 // if the token has some valid representation, print it
                 if let Some(t) = self.tokenizer.next_token(next_token)? {
+                    #[allow(unused_imports)]
                     use std::io::Write;
                     print!("{t}");
                     std::io::stdout().flush()?;
@@ -177,6 +178,7 @@ impl MambaWrapper {
 
             // if the token has some valid representation, print it
             if let Some(t) = self.tokenizer.next_token(next_token)? {
+                #[allow(unused_imports)]
                 use std::io::Write;
                 print!("{t}");
                 std::io::stdout().flush()?;
