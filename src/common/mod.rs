@@ -6,15 +6,31 @@ use dfdx::prelude::*;
 use token_output_stream::TokenOutputStream;
 use tokenizers::Tokenizer;
 
-pub mod hf_mamba {
-    pub const MAMBA_MODEL_ID: &str = "state-spaces/mamba-130m";
-    pub const MAMBA_REVISION: &str = "refs/pr/1";
-    pub const MAMBA_CONFIG: &str = "config.json";
-    pub const MAMBA_FILENAMES: &str = "model.safetensors";
-    pub const TOKENIZER_MODEL_ID: &str = "EleutherAI/gpt-neox-20b";
-    pub const TOKENIZER_FILENAME: &str = "tokenizer.json";
+pub mod hf {
+    pub mod tokenizer {
+        #[allow(unused_imports)]
+        use hf_hub::types::{FilePath, RepoId};
+
+        /// A [RepoId].
+        pub const REPO_ID: &str = "EleutherAI/gpt-neox-20b";
+        /// A [FilePath].
+        pub const FILE_PATH_TOKENIZER_JSON: &str = "tokenizer.json";
+    }
+
+    pub mod mamba_130m {
+        #[allow(unused_imports)]
+        use hf_hub::types::{FilePath, RepoId, RevisionPath};
+
+        /// A [RepoId].
+        pub const REPO_ID: &str = "state-spaces/mamba-130m";
+        /// A [RevisionPath].
+        pub const REVISION_PATH: &str = "refs/pr/1";
+        /// A [FilePath].
+        pub const FILE_PATH_CONFIG_JSON: &str = "config.json";
+        /// A [FilePath].
+        pub const FILE_PATH_MODEL_SAFETENSORS: &str = "model.safetensors";
+    }
 }
-use hf_mamba::*;
 
 pub struct MambaWrapper {
     pub tokenizer: TokenOutputStream,
@@ -29,10 +45,10 @@ pub struct LogitsProcessorWrapper {
 
 impl MambaWrapper {
     #[allow(clippy::too_many_arguments)]
-    pub fn new(mamba: mamba::Mamba<f32, Cpu>, tokenizer: Tokenizer) -> Self {
+    pub fn new(tokenizer: Tokenizer, mamba: mamba::Mamba<f32, Cpu>) -> Self {
         Self {
-            mamba,
             tokenizer: TokenOutputStream::new(tokenizer),
+            mamba,
         }
     }
 

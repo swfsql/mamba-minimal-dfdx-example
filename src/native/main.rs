@@ -3,7 +3,7 @@
 // #![allow(clippy::erasing_op)]
 
 use hf_hub::types::FilePath;
-use mamba_minimal_dfdx_example::{hf_mamba, mamba, LogitsProcessorWrapper, MambaWrapper};
+use mamba_minimal_dfdx_example::{hf, mamba, LogitsProcessorWrapper, MambaWrapper};
 
 // use candle_examples::token_output_stream::TokenOutputStream;
 use candle_transformers::generation::LogitsProcessor;
@@ -20,24 +20,26 @@ fn main() -> anyhow::Result<()> {
 
     let api = Api::new()?;
     let tokenizer_filename = api
-        .model(RepoId(hf_mamba::TOKENIZER_MODEL_ID.into()))
-        .get(&FilePath(hf_mamba::TOKENIZER_FILENAME.into()))?;
+        .model(RepoId(hf::tokenizer::REPO_ID.into()))
+        .get(&FilePath(hf::tokenizer::FILE_PATH_TOKENIZER_JSON.into()))?;
     println!(
         "tokenizer {} path: {tokenizer_filename:?}",
-        hf_mamba::TOKENIZER_FILENAME
+        hf::tokenizer::FILE_PATH_TOKENIZER_JSON
     );
 
     let repo = api.repo(Repo::with_revision(
-        RepoId(hf_mamba::MAMBA_MODEL_ID.into()),
+        RepoId(hf::mamba_130m::REPO_ID.into()),
         RepoType::Model,
-        RevisionPath(hf_mamba::MAMBA_REVISION.into()),
+        RevisionPath(hf::mamba_130m::REVISION_PATH.into()),
     ));
     // let mamba_config_filename = repo.get(MAMBA_CONFIG)?;
     // println!("mamba {MAMBA_CONFIG} path: {mamba_config_filename:?}");
-    let mamba_filename = repo.get(&FilePath(hf_mamba::MAMBA_FILENAMES.into()))?;
+    let mamba_filename = repo.get(&FilePath(
+        hf::mamba_130m::FILE_PATH_MODEL_SAFETENSORS.into(),
+    ))?;
     println!(
         "mamba {} path: {mamba_filename:?}",
-        hf_mamba::MAMBA_FILENAMES
+        hf::mamba_130m::FILE_PATH_MODEL_SAFETENSORS
     );
     println!("retrieved the files in {:?}", start.elapsed());
 
@@ -63,7 +65,7 @@ fn main() -> anyhow::Result<()> {
     };
     println!("loaded the model in {:?}", start.elapsed());
 
-    let mut models = MambaWrapper::new(mamba, tokenizer);
+    let mut models = MambaWrapper::new(tokenizer, mamba);
     let mut processor = LogitsProcessorWrapper::new(299792458, None, None, 1.1, 1024);
 
     models.run_stateless("Mamba is the", 14, &mut processor)?;

@@ -8,24 +8,19 @@ This is a temporary commit. Later this will be squashed etc.
 
 ##### Native
 ```bash
-cargo run --release --features "native"
+RUSTFLAGS="-C target-cpu=native"
+cargo run --release --no-default-features --features "native"
 ```
+TODO: add starting prompt as an arg parameter to the binary
 
 ##### WASM
 ```bash
+# no-ui (web console only)
 wasm-pack build --release --target web --no-default-features
+
+# yew web ui
+wasm-pack build --release --target web --no-default-features --features "wasm_yew_ui"
+
+# serve
 http -a 127.0.0.1
 ```
-
-### Checking
-
-##### Native
-```bash
-cargo check --features "native"
-```
-
-##### WASM
-```bash
-cargo check --target wasm32-unknown-unknown --lib --no-default-features
-```
-

@@ -1,15 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="has-navbar-fixed-bottom">
 
 <head>
-    <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
+    <meta charset="text/html;utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Mamba-Minimal dfdx Example</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
 </head>
 
-<body style="margin: 0; padding: 0; background-color: #1D1F21">
-    <noscript>This page uses wasm and js. Please enable javascript.</noscript>
-    <canvas id="canvas" width="604" height="510"></canvas>
+<!-- TODO: maybe a <body> is not required - see yew example -->
 
+<body>
+    <noscript>This page uses wasm and js. Please enable them.</noscript>
     <script type="module" src="./index.js"></script>
 </body>
 
