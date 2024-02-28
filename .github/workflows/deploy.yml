@@ -1,0 +1,91 @@
+name: Deploy
+on:
+  push:
+    branches:
+      - main
+  # tags:
+  # pull_request:
+env:
+  CARGO_TERM_COLOR: always
+
+  # if a test fails, shows the backtrace
+  RUST_BACKTRACE: 1
+
+  # if depending on a ssh crate, use the git cli.
+  CARGO_NET_GIT_FETCH_WITH_CLI: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # rust compiler for running tests
+      - uses: actions/checkout@v2
+      - name: Install latest nightly (for linux-gnu)
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          target: x86_64-unknown-linux-gnu
+          components: rustfmt, clippy
+          # override: true
+      
+      # rust compiler for creating binaries
+      - name: Install latest nightly (for wasm)
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          target: wasm32-unknown-unknown
+          components: rustfmt, clippy
+          override: true
+      
+      - name: Install wasm target
+        run: |
+          set -e
+          rustup target add wasm32-unknown-unknown
+      
+      # Runs some Rust-related caching
+      - uses: Swatinem/rust-cache@v2
+      
+      # Get Trunk (can prepare assets for publishing)
+      - uses: jetli/trunk-action@v0.1.0
+        with:
+          version: 'latest'
+      
+      # Used to optimize wasm binaries 
+      # based on
+      # https://github.com/rustwasm/walrus/blob/9d6c9de432d6a97478dc76ebdf18aed51584c3af/.github/workflows/main.yml#L56
+      - name: Install binaryen
+        run: |
+          set -e
+          curl -L https://github.com/WebAssembly/binaryen/releases/download/version_117/binaryen-version_117-x86_64-linux.tar.gz | tar xzf -
+          echo "`pwd`/binaryen-version_117/bin" >> $GITHUB_PATH
+      
+      # Build the Mamba App
+      - name: Trunk Build (Mamba)
+        run: |
+          set -e
+          trunk build --release --public-url ./
+      
+      # Prepare assets for publishing
+      - name: Move and optimize assets
+        run: |
+          set -e
+
+          # Prepare the publishing structure
+          mkdir -p publish/
+
+          # move Mamba App assets
+          mv -vn ./dist/* publish/
+
+          # Optimize wasm binaries
+          find publish/ \
+            -name \*.wasm \
+            -prune \
+            -exec wasm-opt -Oz -o "{}" "{}" \;
+      
+      # Publish
+      - name: Frontend Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          personal_token: ${{ secrets.ACTIONS_PERSONAL_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: ./publish
+          keep_files: false
