@@ -1,8 +1,10 @@
 # mamba-minimal-dfdx-example
 
-Adapted from [huggingface/candle/mamba-minimal](https://github.com/huggingface/candle/blob/fd7c8565646039e35925b8730d27ddad195d7e73/candle-examples/examples/mamba-minimal/).
+Click [here](https://swfsql.github.io/mamba-minimal-dfdx-example/) to run the model in your browser.
 
-This is a temporary commit. Later this will be squashed etc.
+### Information
+
+Adapted from [huggingface/candle/mamba-minimal](https://github.com/huggingface/candle/blob/fd7c8565646039e35925b8730d27ddad195d7e73/candle-examples/examples/mamba-minimal/).
 
 ### Building
 
@@ -11,7 +13,6 @@ This is a temporary commit. Later this will be squashed etc.
 RUSTFLAGS="-C target-cpu=native"
 cargo run --release --no-default-features --features "native"
 ```
-TODO: add starting prompt as an arg parameter to the binary
 
 ##### WASM
 ```bash

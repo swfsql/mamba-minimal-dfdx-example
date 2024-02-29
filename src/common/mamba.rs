@@ -69,7 +69,6 @@ pub struct MambaConfig {
     // note: in here no result discards are made, which differs from the references.
     #[module]
     pub norm_f: LayerRMSNorm1DConfig<DModel>,
-    // TODO: delete this layer? It's the same weights from the embedding.
     #[module]
     pub lm_head: LinearConfig<DModel, Vocab>,
 }

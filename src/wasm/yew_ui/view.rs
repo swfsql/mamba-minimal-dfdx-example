@@ -18,7 +18,6 @@ impl model::Model {
             <div class="navbar-menu">
                 <div class="navbar-end">
                     <div class="navbar-item">
-                        // TODO: make into a button that can try to connect/disconnect
                         if self.cache_api.is_exactly_connected() {
                             <span class="tag is-success is-light">
                                 {"Connected to cache"}
@@ -252,10 +251,6 @@ fn model_data<M: yew::Component<Message = Msg>>(
         (false, _loaded @ true, false) => html_nested! {<>
             <button
                 class="button is-success is-light"
-                // TODO:
-                // if generating: stop generation
-                // also if models built: unload them
-                // also if models data loaded: drop them
                 onclick={link.callback(move |_| Msg::ModelDataUnload(selection))}
             >
                 {format!("Loaded ({total_bytes_human})..")}
@@ -290,7 +285,6 @@ fn model_data<M: yew::Component<Message = Msg>>(
         (_checking @ false, _cached @ false, _fetching @ false) => html_nested! {<>
             <button
                 class="button"
-                // todo: download missing chunks
                 onclick={link.callback(move |_| Msg::StartModelDataFetch(selection))}
             >
                 {"Not cached"}
@@ -312,7 +306,6 @@ fn model_data<M: yew::Component<Message = Msg>>(
         (false, _cached @ true, false) => html_nested! {<>
             <button
                 class="button is-success is-light"
-                // todo: erase downloaded chunks
                 onclick={link.callback(move |_| Msg::StartModelDataErase(selection))}
             >
                 {format!("Cached ({total_bytes_human})")}
@@ -363,7 +356,6 @@ fn model_data<M: yew::Component<Message = Msg>>(
                 <button
                     class="button"
                     disabled={true}
-                    // todo: load data directly, skipping the fetch and the cache
                     onclick={link.callback(move |_| Msg::StartModelDataUpload(selection))}
                 >
                     {"Load from file"}

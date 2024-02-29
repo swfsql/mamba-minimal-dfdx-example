@@ -35,12 +35,15 @@ impl model::Model {
                 }
                 true
             }
-            // TODO: check if indexedDB needs some async operations to disconnect
             Msg::StartDisconnectApi => {
-                todo!()
+                log::error!("Msg::StartDisconnectApi not yet implemented");
+                // todo!()
+                false
             }
             Msg::FinishDisconnectApi => {
-                todo!()
+                log::error!("Msg::FinishDisconnectApi not yet implemented");
+                // todo!()
+                false
             }
             Msg::StartModelDataCheck(selection) => {
                 let model_data = self.select(&selection);
@@ -74,7 +77,6 @@ impl model::Model {
                 let link = ctx.link().clone();
                 let api_repo = model_data.config.api_repo(&api);
                 let url = model_data.config.file_url();
-                // TODO: allow parallel chunk downloads
                 ctx.link().send_future(async move {
                     for (i, chunk_file) in chunk_files.into_iter().enumerate() {
                         if let Err(chunk_file) = chunk_file {
@@ -102,10 +104,14 @@ impl model::Model {
                 true
             }
             Msg::StartModelDataUpload(_selection) => {
-                todo!()
+                log::error!("Msg::StartModelDataUpload not yet implemented");
+                // todo!()
+                false
             }
             Msg::FinishModelDataUpload(_selection) => {
-                todo!()
+                log::error!("Msg::FinishModelDataUpload not yet implemented");
+                // todo!()
+                false
             }
             Msg::StartModelDataLoad(selection) => {
                 let api = self.cache_api.as_connected().unwrap().clone();
@@ -243,7 +249,6 @@ impl model::Model {
             },
 
             // inference
-            // TODO: have a webworker to run in the background
             Msg::StartGeneration => {
                 assert!(self.is_reset);
                 assert!(!self.is_input_dirty);
@@ -273,7 +278,6 @@ impl model::Model {
                 true
             }
 
-            // TODO: have an interval to tick for step generations?
             Msg::StepGeneration => {
                 if !self.is_generating {
                     return true;

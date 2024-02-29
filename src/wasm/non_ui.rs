@@ -60,8 +60,6 @@ pub async fn run() -> anyhow::Result<()> {
         let padded_vocab_size = 50280;
         let d_model = 768;
 
-        // TODO: avoid random initialization and just initialize with zeroes
-        // TODO: avoid initialization and instead initialize directly from the data
         timing = web_time::Instant::now();
         log::info!("initializing random mamba model");
         let mamba =

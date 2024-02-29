@@ -9,7 +9,6 @@ use tokenizers::Tokenizer;
 
 pub struct Model {
     // general data
-    // TODO: allow to use wgpu device
     /// Dfdx [Cpu] device.
     pub device: Cpu,
 
@@ -124,7 +123,6 @@ impl MambaWrapperBuilder {
     pub fn build(self) -> Wrapper {
         self.into()
     }
-    // TODO: load in the background with webworkers
     pub fn with(&mut self, selection: &ModelSelection, data: Vec<u8>, device: &Cpu) {
         match selection {
             ModelSelection::Tokenizer => {
@@ -139,8 +137,6 @@ impl MambaWrapperBuilder {
                     let padded_vocab_size = 50280;
                     let d_model = 768;
 
-                    // TODO: avoid random initialization and just initialize with zeroes
-                    // TODO: avoid initialization and instead initialize directly from the data
                     log::info!("initializing random mamba model");
                     let mamba = mamba::MambaConfig::new(
                         n_layer,

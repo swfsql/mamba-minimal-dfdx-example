@@ -233,8 +233,6 @@ impl LogitsProcessorWrapper {
         }
     }
 
-    // TODO: check if `i` should really start a zero, or check if something else is wrong.
-    //
     /// Add logits that represents a token.
     ///
     /// `i` is the i-th call. For the first call, `i` should be `0`.
