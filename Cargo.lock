@@ -1243,7 +1243,7 @@ checksum = "bd5256b483761cd23699d0da46cc6fd2ee3be420bbe6d020ae4a091e70b7e9fd"
 [[package]]
 name = "hf-hub"
 version = "0.3.2"
-source = "git+https://github.com/swfsql/hf-hub.git?rev=fcaade15a9a844c4cde1145d1f40388ae2be998f#fcaade15a9a844c4cde1145d1f40388ae2be998f"
+source = "git+https://github.com/swfsql/hf-hub.git?rev=a411dde1a7ab30d782cb978955b922551fb7eeb1#a411dde1a7ab30d782cb978955b922551fb7eeb1"
 dependencies = [
  "bytes",
  "dirs",

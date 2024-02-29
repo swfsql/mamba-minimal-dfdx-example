@@ -48,7 +48,7 @@ tokenizers = { version = "0.13.4", default-features = false, features = [
 version = "0.3.2"
 # path = "../hf-hub"
 git = "https://github.com/swfsql/hf-hub.git"
-rev = "fcaade15a9a844c4cde1145d1f40388ae2be998f"
+rev = "a411dde1a7ab30d782cb978955b922551fb7eeb1"
 default-features = false
 features = ["online"]
 
@@ -71,6 +71,6 @@ yew = { version = "0.21.0", features = ["csr"] }
 version = "0.3.2"
 # path = "../hf-hub"
 git = "https://github.com/swfsql/hf-hub.git"
-rev = "fcaade15a9a844c4cde1145d1f40388ae2be998f"
+rev = "a411dde1a7ab30d782cb978955b922551fb7eeb1"
 default-features = false
 features = ["wasm"]

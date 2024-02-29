@@ -1,8 +1,9 @@
 use self::model::ModelSelection;
 use hf_hub::{
-    api::wasm::{Api, Metadata},
+    api::wasm::{Api, ApiError, Metadata},
     types::TmpFileBlobKeyList,
 };
+use indexed_db_futures::web_sys::DomException;
 pub use model::{Connection, Model};
 use yew::prelude::*;
 
@@ -18,19 +19,23 @@ pub enum Msg {
     StartConnectApi,
     /// Concludes the huggingface api connection (reqwest and indexeddb clients).
     FinishConnectApi(Api),
+    FailConnectApi(ApiError),
     /// Starts the huggingface api disconnection (reqwest and indexeddb clients).
     StartDisconnectApi,
     /// Concludes the huggingface api disconnection (reqwest and indexeddb clients).
     FinishDisconnectApi,
+    FailDisconnectApi,
     /// Starts checking information about the data of a model (size, etc).
     StartModelDataCheck(ModelSelection),
     /// Concludes checking information about the data of a model (size, etc).
     FinishModelDataCheck(ModelSelection, Metadata, TmpFileBlobKeyList),
+    FailModelDataCheck,
     /// Starts fetching a model data.
     StartModelDataFetch(ModelSelection),
     /// Concludes fetching a single chunk of a model data.
     /// This is useful to state about the fetching progress.
     FinishModelDataFetchSingle(ModelSelection, usize),
+    FailModelDataFetchSingle(ModelSelection, usize, ApiError),
     /// Concludes fetching a model data (all chunks).
     FinishModelDataFetch(ModelSelection),
     /// Starts uploading a model data.
@@ -38,11 +43,13 @@ pub enum Msg {
     StartModelDataUpload(ModelSelection),
     /// Concludes uploading a model data.
     FinishModelDataUpload(ModelSelection),
+    FailModelDataUpload,
     /// Starts loading (reading) a model data.
     /// The goal is to have bytes into the memory.
     StartModelDataLoad(ModelSelection),
     /// Concludes loading (reading) a model data.
     FinishModelDataLoad(ModelSelection, Vec<u8>),
+    FailModelDataLoad(ModelSelection, DomException),
     /// Unloads a model data.
     /// The goal is to clear memory usage.
     /// If the model was built, it also get's unbuilt.
@@ -53,11 +60,13 @@ pub enum Msg {
     StartModelDataErase(ModelSelection),
     /// Concludes erasing a model data from the cache.
     FinishModelDataErase(ModelSelection),
+    FailModelDataErase(ModelSelection, DomException),
     /// Starts building a model from the model data.
     /// This is when the data stops being raw bytes and become tensors (etc) instead.
     StartModelBuild(ModelSelection),
     /// Concludes building a model from the model data.
     FinishModelBuild(ModelSelection),
+    FailModelBuild,
     /// If all required models are built, we move to the next step of being to use the models
     /// for inference (etc).
     TryFinilizeModelsBuilding,

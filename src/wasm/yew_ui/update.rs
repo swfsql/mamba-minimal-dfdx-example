@@ -18,8 +18,10 @@ impl model::Model {
                 assert!(self.cache_api.is_exactly_disconnected());
                 self.cache_api = Connection::Connecting;
                 ctx.link().send_future(async {
-                    let api = Api::new().await.unwrap();
-                    Msg::FinishConnectApi(api)
+                    match Api::new().await {
+                        Ok(ok) => Msg::FinishConnectApi(ok),
+                        Err(err) => Msg::FailConnectApi(err),
+                    }
                 });
                 true
             }
@@ -35,14 +37,21 @@ impl model::Model {
                 }
                 true
             }
+            Msg::FailConnectApi(err) => {
+                self.cache_api = Connection::Disconnected;
+                log::error!("failed to connect to the api: {err}");
+                true
+            }
             Msg::StartDisconnectApi => {
                 log::error!("Msg::StartDisconnectApi not yet implemented");
-                // todo!()
                 false
             }
             Msg::FinishDisconnectApi => {
                 log::error!("Msg::FinishDisconnectApi not yet implemented");
-                // todo!()
+                false
+            }
+            Msg::FailDisconnectApi => {
+                log::error!("Msg::FailDisconnectApi not yet implemented");
                 false
             }
             Msg::StartModelDataCheck(selection) => {
@@ -67,6 +76,9 @@ impl model::Model {
                 model_data.cache.fetching.chunk_list = chunk_list;
                 true
             }
+            Msg::FailModelDataCheck => {
+                todo!()
+            }
             Msg::StartModelDataFetch(selection) => {
                 let api = self.cache_api.as_connected().unwrap().clone();
                 let model_data = self.select_mut(&selection);
@@ -80,7 +92,12 @@ impl model::Model {
                 ctx.link().send_future(async move {
                     for (i, chunk_file) in chunk_files.into_iter().enumerate() {
                         if let Err(chunk_file) = chunk_file {
-                            let () = api_repo.download_tempfile(&url, &chunk_file).await.unwrap();
+                            match api_repo.download_tempfile(&url, &chunk_file).await {
+                                Ok(()) => {}
+                                Err(err) => {
+                                    return Msg::FailModelDataFetchSingle(selection, i, err)
+                                }
+                            }
                         }
                         link.send_message(Msg::FinishModelDataFetchSingle(selection, i));
                     }
@@ -97,6 +114,13 @@ impl model::Model {
                 }
                 true
             }
+            Msg::FailModelDataFetchSingle(selection, i, err) => {
+                log::error!("failed to fetch chunk {i} for {selection:?}; err: {err}");
+                let model_data = self.select_mut(&selection);
+                model_data.cache.is_busy = false;
+                model_data.cache.is_done = false;
+                true
+            }
             Msg::FinishModelDataFetch(selection) => {
                 let model_data = self.select_mut(&selection);
                 model_data.cache.is_busy = false;
@@ -105,12 +129,14 @@ impl model::Model {
             }
             Msg::StartModelDataUpload(_selection) => {
                 log::error!("Msg::StartModelDataUpload not yet implemented");
-                // todo!()
                 false
             }
             Msg::FinishModelDataUpload(_selection) => {
                 log::error!("Msg::FinishModelDataUpload not yet implemented");
-                // todo!()
+                false
+            }
+            Msg::FailModelDataUpload => {
+                log::error!("Msg::FailModelDataUpload not yet implemented");
                 false
             }
             Msg::StartModelDataLoad(selection) => {
@@ -126,8 +152,10 @@ impl model::Model {
                     .collect::<Result<Vec<_>, _>>()
                     .unwrap();
                 ctx.link().send_future(async move {
-                    let data = api.load_bytes(&chunks_keys).await;
-                    Msg::FinishModelDataLoad(selection, data)
+                    match api.load_bytes(&chunks_keys).await {
+                        Ok(ok) => Msg::FinishModelDataLoad(selection, ok),
+                        Err(err) => Msg::FailModelDataLoad(selection, err),
+                    }
                 });
                 true
             }
@@ -136,6 +164,12 @@ impl model::Model {
                 model_data.load.data = data;
                 ctx.link().send_message(Msg::StartModelBuild(selection));
                 false
+            }
+            Msg::FailModelDataLoad(selection, err) => {
+                log::error!("failed to load data for {selection:?}; err: {err:?}");
+                let model_data = self.select_mut(&selection);
+                model_data.load.is_busy = false;
+                true
             }
             Msg::ModelDataUnload(selection) => {
                 // stop any in-progress generation
@@ -190,8 +224,10 @@ impl model::Model {
                     .unwrap();
 
                 ctx.link().send_future(async move {
-                    let () = api.delete_bytes(&chunks_keys).await;
-                    Msg::FinishModelDataErase(selection)
+                    match api.delete_bytes(&chunks_keys).await {
+                        Ok(()) => Msg::FinishModelDataErase(selection),
+                        Err(err) => Msg::FailModelDataErase(selection, err),
+                    }
                 });
 
                 model_data.cache.is_busy = true;
@@ -210,6 +246,19 @@ impl model::Model {
 
                 true
             }
+            Msg::FailModelDataErase(selection, err) => {
+                log::error!("failed to erase data for {selection:?}; err: {err:?}");
+                let model_data = self.select_mut(&selection);
+                model_data.cache.is_busy = false;
+                model_data.cache.is_done = false;
+                // re-check if the data is cached or not
+                //
+                // note: if partial data has been erased, then the button will switch to
+                // the "click to fetch" option.
+                model_data.cache.is_checking = true;
+                ctx.link().send_message(Msg::StartModelDataCheck(selection));
+                true
+            }
             Msg::StartModelBuild(selection) => {
                 let model_data = self.select_mut(&selection);
                 let data = std::mem::take(&mut model_data.load.data);
@@ -224,6 +273,9 @@ impl model::Model {
                 model_data.load.is_done = true;
                 ctx.link().send_message(Msg::TryFinilizeModelsBuilding);
                 true
+            }
+            Msg::FailModelBuild => {
+                todo!()
             }
             Msg::TryFinilizeModelsBuilding => {
                 // consume the built models if they are all ready
