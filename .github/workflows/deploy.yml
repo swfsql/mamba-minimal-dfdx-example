@@ -19,18 +19,16 @@ jobs:
     # permissions:
     #   contents: write
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       
       # rust compiler for creating binaries
       - name: Install latest nightly (for wasm)
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@nightly
         with:
-          toolchain: nightly
-          target: wasm32-unknown-unknown
+          targets: wasm32-unknown-unknown
           components: rustfmt, clippy
-          override: true
       
-      - name: Install wasm target
+      - name: Install Wasm Target
         run: |
           set -e
           rustup target add wasm32-unknown-unknown
@@ -38,16 +36,14 @@ jobs:
       # Runs some Rust-related caching
       - uses: Swatinem/rust-cache@v2
 
-      - name: Install wasm-pack
-        uses: actions-rs/cargo@v1
-        with:
-          command: install
-          args: --target-dir ./target/wasm/ wasm-pack
-      
+      - name: Download wasm-pack
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+      # wasm-pack build --release also optimizes the wasm binary
       - name: Build Release wasm
         run: wasm-pack build --release --target web --no-default-features --features "wasm_yew_ui"
 
-      - name: Prepare Wasm deploy
+      - name: Prepare Wasm Deploy
         run: |
           set -e
           # Prepare the publishing structure

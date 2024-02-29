@@ -42,21 +42,18 @@ tokenizers = { version = "0.13.4", default-features = false, features = [
     "unstable_wasm",
 ] }
 
-# Note: requires esaxx-rs which requires clang
-
 # non-wasm target
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies.hf-hub]
 version = "0.3.2"
 # path = "../hf-hub"
 git = "https://github.com/swfsql/hf-hub.git"
-rev = "8c3865841d8ce0b3538972a17c05aa0301283a8d"
+rev = "fcaade15a9a844c4cde1145d1f40388ae2be998f"
 default-features = false
 features = ["online"]
 
 # wasm target
 
-# TODO: some dependencies are optional (ui-related ones)
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 console_error_panic_hook = "0.1.6"
 reqwest = { version = "0.11.23", features = ["json"] }
@@ -74,6 +71,6 @@ yew = { version = "0.21.0", features = ["csr"] }
 version = "0.3.2"
 # path = "../hf-hub"
 git = "https://github.com/swfsql/hf-hub.git"
-rev = "8c3865841d8ce0b3538972a17c05aa0301283a8d"
+rev = "fcaade15a9a844c4cde1145d1f40388ae2be998f"
 default-features = false
 features = ["wasm"]
