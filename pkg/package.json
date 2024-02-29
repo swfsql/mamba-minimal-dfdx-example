@@ -1,0 +1,14 @@
+{
+  "name": "mamba-minimal-dfdx-example",
+  "version": "0.1.0",
+  "files": [
+    "mamba_minimal_dfdx_example_bg.wasm",
+    "mamba_minimal_dfdx_example.js",
+    "mamba_minimal_dfdx_example.d.ts"
+  ],
+  "module": "mamba_minimal_dfdx_example.js",
+  "types": "mamba_minimal_dfdx_example.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
