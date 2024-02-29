@@ -19,6 +19,8 @@ jobs:
     # permissions:
     #   contents: write
     steps:
+      - uses: actions/checkout@v2
+      
       # rust compiler for creating binaries
       - name: Install latest nightly (for wasm)
         uses: actions-rs/toolchain@v1
@@ -37,27 +39,27 @@ jobs:
       - uses: Swatinem/rust-cache@v2
 
       - name: Install wasm-pack
-      uses: actions-rs/cargo@v1
-      with:
-        command: install
-        args: --target-dir ./target/wasm/ wasm-pack
+        uses: actions-rs/cargo@v1
+        with:
+          command: install
+          args: --target-dir ./target/wasm/ wasm-pack
       
       - name: Build Release wasm
-      run: wasm-pack build --release --target web --no-default-features --features "wasm_yew_ui"
+        run: wasm-pack build --release --target web --no-default-features --features "wasm_yew_ui"
 
       - name: Prepare Wasm deploy
-      run: |
-        set -e
-        # Prepare the publishing structure
-        mkdir -p publish/
+        run: |
+          set -e
+          # Prepare the publishing structure
+          mkdir -p publish/
 
-        # move assets
-        mv index.html publish/
-        mv index.js publish/
-        mv pkg/ publish/pkg/
+          # move assets
+          mv index.html publish/
+          mv index.js publish/
+          mv pkg/ publish/pkg/
 
-        # rm gitignore
-        rm publish/pkg/.gitignore
+          # rm gitignore
+          rm publish/pkg/.gitignore
       
       # Publish
       - name: Frontend Deploy
