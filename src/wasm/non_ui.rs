@@ -30,8 +30,7 @@ pub async fn run() -> anyhow::Result<()> {
         .get(&FilePath(
             hf::mamba_130m::FILE_PATH_MODEL_SAFETENSORS.into(),
         ))
-        .await
-        .unwrap();
+        .await?;
     log::info!(
         "finished downloading/checking the mamba model in {}ms",
         timing.elapsed().as_millis()
@@ -39,7 +38,7 @@ pub async fn run() -> anyhow::Result<()> {
 
     timing = web_time::Instant::now();
     log::info!("loading tokenizer data");
-    let tokenizer = api.load_bytes(&tokenizer_filename).await;
+    let tokenizer = api.load_bytes(&tokenizer_filename).await.unwrap();
     log::info!(
         "tokenizer data loaded in {}ms",
         timing.elapsed().as_millis()
@@ -53,7 +52,7 @@ pub async fn run() -> anyhow::Result<()> {
 
     timing = web_time::Instant::now();
     log::info!("loading mamba data");
-    let mamba_bytes = api.load_bytes(&mamba_filename).await;
+    let mamba_bytes = api.load_bytes(&mamba_filename).await.unwrap();
     log::info!("mamba data loaded in {}ms", timing.elapsed().as_millis()); // ~2-3s
     let mamba = {
         let n_layer = 24;
@@ -137,11 +136,6 @@ pub async fn run() -> anyhow::Result<()> {
         (i * 1000) as f32 / elapsed as f32
     );
     log::info!("{output}");
-
-    // models.run_stateless("Mamba is the", 14, &mut processor)?;
-    // println!();
-    // models.run_stateful("Mamba is the", 5000, &mut processor)?;
-    // println!();
 
     Ok(())
 }

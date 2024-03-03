@@ -77,7 +77,7 @@ impl MambaWrapper {
         let cpu = self.mamba.embedding.weight.device();
         let mut states = vec![];
         for _ in 0..self.mamba.layers.len() {
-            let state = cpu.try_build_module::<f32>(dfdx::nn::MambaStateCacheConfig::new(
+            let state = cpu.try_build_module::<f32>(dfdx_mamba::MambaStateCacheConfig::new(
                 1,
                 16,
                 4,

@@ -20,19 +20,19 @@ required-features = ["native"]
 
 # dfdx version containing necessary PRs
 [dependencies.dfdx]
-# path = "../dfdx/dfdx"
 git = 'https://github.com/swfsql/dfdx.git'
-rev = "bff1b658aa3b91b0af57f037c7cc704d216d1f03"
+branch = "this-main"
+# rev = "c4a2995"
 default-features = false
-features = [
-    "safetensors",
-    "nightly",
-    # "std",
-    # "cpu",
-    # "fast-alloc",
-    # "cuda",
-    # "cudnn",
-]
+features = ["nightly", "safetensors"]
+
+[dependencies.dfdx-mamba]
+git = 'https://github.com/swfsql/dfdx-mamba.git'
+branch = "main"
+# path = "../dfdx-mamba"
+# rev = "3b7549845baff53c8fab51068a04d87e21ba0470"
+features = ["nightly", "safetensors"]
+
 
 [dependencies]
 anyhow = "1.0.0"

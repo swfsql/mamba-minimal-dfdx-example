@@ -54,9 +54,11 @@ pub mod types {
     pub type DInner = usize;
 
     /// A [MambaBlockConfig] set to runtime values.
-    pub type MambaBlockDynConfig = MambaBlockConfig<DModel, DState, DtRank, DConv, DInner>;
+    pub type MambaBlockDynConfig =
+        dfdx_mamba::MambaBlockConfig<DModel, DState, DtRank, DConv, DInner>;
     /// A [MambaBlock] set to runtime values.
-    pub type MambaBlockDyn<E, D> = MambaBlock<DModel, DState, DtRank, DConv, DInner, E, D>;
+    pub type MambaBlockDyn<E, D> =
+        dfdx_mamba::MambaBlock<DModel, DState, DtRank, DConv, DInner, E, D>;
 }
 
 #[derive(Default, Debug, Clone, CustomModule)]
@@ -110,8 +112,9 @@ impl MambaConfig {
             layers: {
                 let mut layers = Vec::with_capacity(n_layer);
                 for _ in 0..n_layer {
-                    let mamba_block =
-                        MambaBlockConfig::new(d_model, d_state, dt_rank, d_conv, d_inner);
+                    let mamba_block = dfdx_mamba::MambaBlockConfig::new(
+                        d_model, d_state, dt_rank, d_conv, d_inner,
+                    );
                     let norm = LayerRMSNorm1DConfig(d_model);
                     let residual = ResidualAdd((norm, mamba_block));
                     let layer = ResidualMambaBlockConfig { res: residual };
@@ -193,7 +196,8 @@ pub mod stateful {
     pub type SingleInput<E, D, T> = Tensor<(Batch, DModel), E, D, T>;
 
     /// A [MambaStateCache] set to runtime values.
-    pub type StateCache<E, D, T> = MambaStateCache<Batch, DState, DConv, DInner, E, D, T>;
+    pub type StateCache<E, D, T> =
+        dfdx_mamba::MambaStateCache<Batch, DState, DConv, DInner, E, D, T>;
 
     /// A list containing a [MambaStateCache] per [MambaBlock] (stateful).
     pub type MambaStatesDyn<E, D, T> = Vec<StateCache<E, D, T>>;
@@ -210,7 +214,7 @@ pub mod stateful {
         fn try_forward(&self, x: VocabInputWithStates<E, D, T>) -> Result<Self::Output, Error> {
             let (x, states): (
                 VocabInput<D, T>,
-                Vec<MambaStateCache<Batch, DState, DConv, DInner, E, D, T>>,
+                Vec<dfdx_mamba::MambaStateCache<Batch, DState, DConv, DInner, E, D, T>>,
             ) = x;
 
             let mut x: SingleInput<E, D, T> = self.embedding.try_forward(x)?;
